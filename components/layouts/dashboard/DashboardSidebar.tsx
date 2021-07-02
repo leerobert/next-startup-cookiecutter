@@ -7,13 +7,18 @@ import { signIn, signOut, useSession } from "next-auth/client"
 // material
 import { makeStyles } from '@material-ui/core/styles';
 import { 
-  Box, Drawer, Divider, List, ListItem, ListItemText 
+  Box, Drawer, Divider, List, ListItem, ListItemText, ListItemIcon
 } from '@material-ui/core';
 import config from './config'
 
+import SettingsIcon from '@material-ui/icons/Settings';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100%'
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh'
   },
   drawer: {
     width: config.drawerWidth,
@@ -46,9 +51,35 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, isPerm
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  const renderUnauthenticatedBottomContent = (
+    <List>
+      <ListItem button onClick={() => signIn()}>
+        <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+        <ListItemText primary="Login" />
+      </ListItem>
+      <ListItem button onClick={() => signIn()}>
+        <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+        <ListItemText primary="Signup" />
+      </ListItem>
+    </List>
+  )
+
+  const renderAuthenticatedBottomContent = (
+    <List>
+      <ListItem button>
+        <ListItemIcon><SettingsIcon /></ListItemIcon>
+        <ListItemText primary="Settings" />
+      </ListItem>
+      <ListItem button onClick={() => signOut()}>
+        <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItem>
+    </List>
+  )
+
   const renderContent = (
     // was Scrollbar
-    <Box>
+    <Box className={classes.root}>
       <div className={classes.toolbar} />
       <Divider />
       <List>
@@ -69,14 +100,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, isPerm
         ))}
       </List>
       <div className={classes.menuSpacing} />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      {session ? renderAuthenticatedBottomContent : renderUnauthenticatedBottomContent}
     </Box>
   );
 
@@ -91,6 +115,9 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, isPerm
         paper: classes.drawerPaper,
       }}
       anchor="left"
+      ModalProps={{
+        keepMounted: !isPermanent, // Better open performance on mobile.
+      }}
     >
       {renderContent}
     </Drawer>
