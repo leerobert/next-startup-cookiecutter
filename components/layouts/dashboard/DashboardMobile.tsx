@@ -3,8 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import config from './config'
 
 import DashboardNavbar from './DashboardNavbar'
-import DashboardSidebar from './DashboardSidebar'
-import { Hidden, CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemText } from '@material-ui/core';
+import { CssBaseline } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
